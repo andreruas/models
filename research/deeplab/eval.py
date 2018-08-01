@@ -24,6 +24,7 @@ from deeplab import common
 from deeplab import model
 from deeplab.datasets import segmentation_dataset
 from deeplab.utils import input_generator
+import time
 
 slim = tf.contrib.slim
 
@@ -83,6 +84,7 @@ flags.DEFINE_integer('max_number_of_evaluations', 0,
 
 
 def main(unused_argv):
+  startTime = time.time()
   tf.logging.set_verbosity(tf.logging.INFO)
   # Get dataset-dependent information.
   dataset = segmentation_dataset.get_dataset(
@@ -168,6 +170,13 @@ def main(unused_argv):
         max_number_of_evaluations=num_eval_iters,
         eval_interval_secs=FLAGS.eval_interval_secs)
 
+    dur = time.time() - startTime
+    FPS = 1706/dur
+    print(" ")
+    print("----------------------------------------------------------------------------------------------")
+    print("It took " + str(round(dur,3)) + " seconds to evaluate " + str(1706) + " images. (" + str(round(FPS,1)) + " FPS)")
+    print("----------------------------------------------------------------------------------------------")
+    print(" ")
 
 if __name__ == '__main__':
   flags.mark_flag_as_required('checkpoint_dir')
