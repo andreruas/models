@@ -6,12 +6,7 @@
 
 
 # Personal stuff to ignore
-/deeplab/datasets
-
-
-
-
-
+research/deeplab/datasets/*
 
 
 

@@ -101,11 +101,23 @@ _PASCAL_VOC_SEG_INFORMATION = DatasetDescriptor(
 # You are required to figure it out for your training/testing example.
 _ADE20K_INFORMATION = DatasetDescriptor(
     splits_to_sizes={
-        'train': 20210,  # num of samples in images/training
-        'val': 2000,  # num of samples in images/validation
+        'train': 17286,  # num of samples in images/training
+        'val': 1706,  # num of samples in images/validation
     },
     num_classes=151,
     ignore_label=0,
+)
+
+
+# These number (i.e., 'train'/'test') seems to have to be hard coded
+# You are required to figure it out for your training/testing example.
+_RAIL2_INFORMATION = DatasetDescriptor(
+    splits_to_sizes={
+        'train': 192,  # num of samples in images/training
+        'val': 9,  # num of samples in images/validation
+    },
+    num_classes=2,
+    ignore_label=255,
 )
 
 
@@ -113,6 +125,7 @@ _DATASETS_INFORMATION = {
     'cityscapes': _CITYSCAPES_INFORMATION,
     'pascal_voc_seg': _PASCAL_VOC_SEG_INFORMATION,
     'ade20k': _ADE20K_INFORMATION,
+    'rail2': _RAIL2_INFORMATION,
 }
 
 # Default file pattern of TFRecord of TensorFlow Example.
