@@ -29,6 +29,7 @@ defined by the different datasets. Supported colormaps are:
 import numpy as np
 
 # Dataset names.
+_RAIL2 = 'rail2'
 _ADE20K = 'ade20k'
 _CITYSCAPES = 'cityscapes'
 _MAPILLARY_VISTAS = 'mapillary_vistas'
@@ -36,12 +37,23 @@ _PASCAL = 'pascal'
 
 # Max number of entries in the colormap for each dataset.
 _DATASET_MAX_ENTRIES = {
+    _RAIL2: 2,
     _ADE20K: 151,
     _CITYSCAPES: 19,
     _MAPILLARY_VISTAS: 66,
     _PASCAL: 256,
 }
 
+def create_rail2_label_colormap():
+  """Creates a label colormap used in RAIL2 segmentation benchmark.
+
+  Returns:
+    A colormap for visualizing segmentation results.
+  """
+  return np.asarray([
+      [0, 0, 128],
+      [128, 0, 0],
+  ])
 
 def create_ade20k_label_colormap():
   """Creates a label colormap used in ADE20K segmentation benchmark.
@@ -325,6 +337,8 @@ def create_pascal_label_colormap():
 
   return colormap
 
+def get_rail2_name():
+  return _RAIL2
 
 def get_ade20k_name():
   return _ADE20K
@@ -340,7 +354,6 @@ def get_mapillary_vistas_name():
 
 def get_pascal_name():
   return _PASCAL
-
 
 def bit_get(val, idx):
   """Gets the bit value.
@@ -367,6 +380,8 @@ def create_label_colormap(dataset=_PASCAL):
   Raises:
     ValueError: If the dataset is not supported.
   """
+  if dataset == _RAIL2:
+    return create_rail2_label_colormap()
   if dataset == _ADE20K:
     return create_ade20k_label_colormap()
   elif dataset == _CITYSCAPES:
