@@ -120,12 +120,24 @@ _RAIL2_INFORMATION = DatasetDescriptor(
     ignore_label=255,
 )
 
+# These number (i.e., 'train'/'test') seems to have to be hard coded
+# You are required to figure it out for your training/testing example.
+_MARS8_INFORMATION = DatasetDescriptor(
+    splits_to_sizes={
+        'train': 330,  # num of samples in images/training
+        'val': 14,  # num of samples in images/validation
+    },
+    num_classes=5,
+    ignore_label=4,
+)
+
 
 _DATASETS_INFORMATION = {
     'cityscapes': _CITYSCAPES_INFORMATION,
     'pascal_voc_seg': _PASCAL_VOC_SEG_INFORMATION,
     'ade20k': _ADE20K_INFORMATION,
     'rail2': _RAIL2_INFORMATION,
+    'mars8': _MARS8_INFORMATION,
 }
 
 # Default file pattern of TFRecord of TensorFlow Example.

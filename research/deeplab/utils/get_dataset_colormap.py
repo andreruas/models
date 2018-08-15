@@ -29,6 +29,7 @@ defined by the different datasets. Supported colormaps are:
 import numpy as np
 
 # Dataset names.
+_MARS8 = 'mars8'
 _RAIL2 = 'rail2'
 _ADE20K = 'ade20k'
 _CITYSCAPES = 'cityscapes'
@@ -37,12 +38,27 @@ _PASCAL = 'pascal'
 
 # Max number of entries in the colormap for each dataset.
 _DATASET_MAX_ENTRIES = {
+    _MARS8: 5,
     _RAIL2: 2,
     _ADE20K: 151,
     _CITYSCAPES: 19,
     _MAPILLARY_VISTAS: 66,
     _PASCAL: 256,
 }
+
+def create_mars8_label_colormap():
+  """Creates a label colormap used in MARS8 segmentation benchmark.
+
+  Returns:
+    A colormap for visualizing segmentation results.
+  """
+  return np.asarray([
+      [255, 128, 0],
+      [0, 0, 0],
+      [255, 0, 128],
+      [0, 255, 0],
+      [255, 255, 255],
+  ])
 
 def create_rail2_label_colormap():
   """Creates a label colormap used in RAIL2 segmentation benchmark.
@@ -337,6 +353,9 @@ def create_pascal_label_colormap():
 
   return colormap
 
+def get_mars8_name():
+  return _MARS8
+
 def get_rail2_name():
   return _RAIL2
 
@@ -380,6 +399,8 @@ def create_label_colormap(dataset=_PASCAL):
   Raises:
     ValueError: If the dataset is not supported.
   """
+  if dataset == _MARS8:
+    return create_mars8_label_colormap()
   if dataset == _RAIL2:
     return create_rail2_label_colormap()
   if dataset == _ADE20K:

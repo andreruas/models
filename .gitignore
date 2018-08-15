@@ -6,17 +6,9 @@
 
 
 # Personal stuff to ignore
-research/deeplab/datasets/*
-
-
-
-
-
-
-
-
-
-
+research/deeplab/datasets/Rail*
+research/deeplab/datasets/Combined*
+research/deeplab/datasets/ADE20K*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
