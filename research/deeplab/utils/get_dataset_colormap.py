@@ -67,8 +67,8 @@ def create_rail2_label_colormap():
     A colormap for visualizing segmentation results.
   """
   return np.asarray([
-      [0, 0, 128],
-      [128, 0, 0],
+      [128, 0, 128],
+      [0, 128, 0],
   ])
 
 def create_ade20k_label_colormap():
