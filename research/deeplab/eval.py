@@ -171,10 +171,10 @@ def main(unused_argv):
         eval_interval_secs=FLAGS.eval_interval_secs)
 
     dur = time.time() - startTime
-    FPS = 1706/dur
+    FPS = dataset.num_samples/dur
     print(" ")
     print("----------------------------------------------------------------------------------------------")
-    print("It took " + str(round(dur,3)) + " seconds to evaluate " + str(1706) + " images. (" + str(round(FPS,1)) + " FPS)")
+    print("It took " + str(round(dur,3)) + " seconds to evaluate " + str(dataset.num_samples) + " images. (" + str(round(FPS,1)) + " FPS)")
     print("----------------------------------------------------------------------------------------------")
     print(" ")
 

@@ -86,6 +86,9 @@ flags.DEFINE_enum('colormap_type', 'pascal', ['pascal', 'cityscapes','rail2','ad
 flags.DEFINE_boolean('also_save_raw_predictions', False,
                      'Also save raw predictions.')
 
+flags.DEFINE_boolean('save_predictions', True,
+                     'Also save raw predictions.')
+
 flags.DEFINE_integer('max_number_of_iterations', 0,
                      'Maximum number of visualization iterations. Will loop '
                      'indefinitely upon nonpositive values.')
@@ -106,7 +109,6 @@ _PREDICTION_FORMAT = '%06d_prediction'
 # during training should be mapped to the labels for evaluation.
 _CITYSCAPES_TRAIN_ID_TO_EVAL_ID = [7, 8, 11, 12, 13, 17, 19, 20, 21, 22,
                                    23, 24, 25, 26, 27, 28, 31, 32, 33]
-
 
 def _convert_train_id_to_eval_id(prediction, train_id_to_eval_id):
   """Converts the predicted label for evaluation.
@@ -155,22 +157,23 @@ def _process_batch(sess, original_images, semantic_predictions, image_names,
 
   num_image = semantic_predictions.shape[0]
   for i in range(num_image):
-    image_height = np.squeeze(image_heights[i])
-    image_width = np.squeeze(image_widths[i])
-    original_image = np.squeeze(original_images[i])
-    semantic_prediction = np.squeeze(semantic_predictions[i])
-    crop_semantic_prediction = semantic_prediction[:image_height, :image_width]
+    if FLAGS.save_predictions:
+        image_height = np.squeeze(image_heights[i])
+        image_width = np.squeeze(image_widths[i])
+        original_image = np.squeeze(original_images[i])
+        semantic_prediction = np.squeeze(semantic_predictions[i])
+        crop_semantic_prediction = semantic_prediction[:image_height, :image_width]
 
-    # Save image.
-    save_annotation.save_annotation(
-        original_image, save_dir, _IMAGE_FORMAT % (image_id_offset + i),
-        add_colormap=False)
+        # Save image.
+        save_annotation.save_annotation(
+            original_image, save_dir, _IMAGE_FORMAT % (image_id_offset + i),
+            add_colormap=False)
 
-    # Save prediction.
-    save_annotation.save_annotation(
-        crop_semantic_prediction, save_dir,
-        _PREDICTION_FORMAT % (image_id_offset + i), add_colormap=True,
-        colormap_type=FLAGS.colormap_type)
+        # Save prediction.
+        save_annotation.save_annotation(
+            crop_semantic_prediction, save_dir,
+            _PREDICTION_FORMAT % (image_id_offset + i), add_colormap=True,
+            colormap_type=FLAGS.colormap_type)
 
     if FLAGS.also_save_raw_predictions:
       image_filename = os.path.basename(image_names[i])
@@ -185,6 +188,7 @@ def _process_batch(sess, original_images, semantic_predictions, image_names,
 
 
 def main(unused_argv):
+  startTime = time.time()
   tf.logging.set_verbosity(tf.logging.INFO)
   # Get dataset-dependent information.
   dataset = segmentation_dataset.get_dataset(
@@ -238,6 +242,7 @@ def main(unused_argv):
     predictions = predictions[common.OUTPUT_TYPE]
 
     if FLAGS.min_resize_value and FLAGS.max_resize_value:
+      print("RESIZING AND PADDING OUTPUT IMAGES,,,")
       # Only support batch_size = 1, since we assume the dimensions of original
       # image after tf.squeeze is [height, width, 3].
       assert FLAGS.vis_batch_size == 1
@@ -291,8 +296,10 @@ def main(unused_argv):
         sv.saver.restore(sess, last_checkpoint)
 
         image_id_offset = 0
+        durBatchTime = 0
         for batch in range(num_batches):
           tf.logging.info('Visualizing batch %d / %d', batch + 1, num_batches)
+          batchTime = time.time()
           _process_batch(sess=sess,
                          original_images=samples[common.ORIGINAL_IMAGE],
                          semantic_predictions=predictions,
@@ -303,11 +310,24 @@ def main(unused_argv):
                          save_dir=save_dir,
                          raw_save_dir=raw_save_dir,
                          train_id_to_eval_id=train_id_to_eval_id)
+          durBatchTime = durBatchTime + (time.time()-batchTime)
           image_id_offset += FLAGS.vis_batch_size
 
       tf.logging.info(
           'Finished visualization at ' + time.strftime('%Y-%m-%d-%H:%M:%S',
                                                        time.gmtime()))
+      dur = time.time() - startTime
+      FPS = dataset.num_samples/dur
+      FPSbatch = dataset.num_samples/durBatchTime
+      print(" ")
+      print("--------------------------------------------------------------------")
+      print("It took " + str(round(dur,3)) + " seconds to evaluate " + str(dataset.num_samples) + " images. (" + str(round(FPS,1)) + " FPS)")
+      print("--------------------------------------------------------------------")
+      print("--------------------------------------------------------------------")
+      print("It took " + str(round(durBatchTime,3)) + " seconds to evaluate " + str(dataset.num_samples) + " images. (" + str(round(FPSbatch,1)) + " FPS)")
+      print("--------------------------------------------------------------------")
+      print(" ")
+
       time_to_next_eval = start + FLAGS.eval_interval_secs - time.time()
       if time_to_next_eval > 0:
         time.sleep(time_to_next_eval)
