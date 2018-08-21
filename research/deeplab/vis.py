@@ -310,15 +310,16 @@ def main(unused_argv):
                          save_dir=save_dir,
                          raw_save_dir=raw_save_dir,
                          train_id_to_eval_id=train_id_to_eval_id)
-          durBatchTime = durBatchTime + (time.time()-batchTime)
+          if (batch >= 5):
+              durBatchTime = durBatchTime + (time.time()-batchTime)
           image_id_offset += FLAGS.vis_batch_size
 
       tf.logging.info(
           'Finished visualization at ' + time.strftime('%Y-%m-%d-%H:%M:%S',
                                                        time.gmtime()))
       dur = time.time() - startTime
-      FPS = dataset.num_samples/dur
-      FPSbatch = dataset.num_samples/durBatchTime
+      FPS = (dataset.num_samples-5)/dur
+      FPSbatch = (dataset.num_samples-5)/durBatchTime
       print(" ")
       print("--------------------------------------------------------------------")
       print("It took " + str(round(dur,3)) + " seconds to evaluate " + str(dataset.num_samples) + " images. (" + str(round(FPS,1)) + " FPS)")
