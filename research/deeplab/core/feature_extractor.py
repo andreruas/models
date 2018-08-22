@@ -61,7 +61,7 @@ def _mobilenet_v2(net,
         net,
         conv_defs=mobilenet_v2.V2_DEF,
         # depth_multiplier=depth_multiplier,
-        depth_multiplier=1.0, # FIX THIS # TODO
+        depth_multiplier=1.4, # FIX THIS # TODO
         min_depth=8 if depth_multiplier == 1.0 else 1,
         divisible_by=8 if depth_multiplier == 1.0 else 1,
         final_endpoint=final_endpoint or _MOBILENET_V2_FINAL_ENDPOINT,
